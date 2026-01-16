@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wewbo - Anime Streaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Figtree", "sans-serif"],
+            },
+            colors: {
+              red: {
+                50: "#FEF2F2",
+                100: "#FEE2E2",
+                500: "#EF4444",
+                600: "#DC2626",
+                700: "#B91C1C",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Figtree", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-600 min-h-screen flex flex-col font-sans antialiased selection:bg-red-100 selection:text-red-700">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-gray-100 supports-[backdrop-filter]:bg-white/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 sm:h-20 items-center">
+          
+          <!-- Logo & Brand -->
+          <div class="flex items-center gap-8">
+            <a href="{{ url_for('index') }}" class="group flex items-center gap-2">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200 group-hover:scale-105 transition-transform duration-200">
+                <i class="fas fa-play text-sm sm:text-base"></i>
+              </div>
+              <span class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight group-hover:text-red-600 transition-colors">Wewbo</span>
+            </a>
+            
+            <!-- Desktop Nav -->
+            <div class="hidden sm:flex space-x-1">
+              <a href="{{ url_for('index') }}" class="px-4 py-2 rounded-full text-sm font-medium text-gray-900 bg-gray-100/50 hover:bg-gray-100 transition-colors">
+                Home
+              </a>
+              <a href="#" class="px-4 py-2 rounded-full text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                Jadwal
+              </a>
+            </div>
+          </div>
+
+          <!-- Search & Tools -->
+          <div class="flex-1 max-w-lg ml-4 sm:ml-8">
+            <form action="{{ url_for('search_anime') }}" method="POST" class="relative group">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class=" text-gray-400 group-focus-within:text-red-500 transition-colors"></i>
+              </div>
+              
+              <div class="flex rounded-2xl bg-gray-100/80 border border-transparent focus-within:bg-white focus-within:border-red-200 focus-within:ring-4 focus-within:ring-red-50/50 transition-all duration-300 overflow-hidden shadow-inner">
+                 <!-- Source Selector (Integrated) -->
+                <div class="relative border-r border-gray-200">
+                    <select name="source" onchange="this.form.submit()" class="h-full py-2.5 pl-3 pr-8 bg-transparent text-gray-600 text-sm font-medium focus:ring-0 border-none cursor-pointer hover:text-gray-900 transition-colors appearance-none outline-none">
+                        {% for s in sources %}
+                        <option value="{{ s }}" {% if s == source %}selected{% endif %}>{{ s|title }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                        <i class="fas fa-chevron-down text-[10px] text-gray-400"></i>
+                    </div>
+                </div>
+
+                <input 
+                  type="text" 
+                  name="search" 
+                  class="block w-full pl-3 pr-4 py-2.5 bg-transparent border-none text-gray-900 placeholder-gray-400 focus:ring-0 sm:text-sm" 
+                  placeholder="Cari anime..." 
+                  value="{{ query if query else '' }}"
+                >
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <!-- Spacer for fixed navbar -->
+    <div class="h-16 sm:h-20"></div>
+
+    <!-- Content -->
+    <main class="flex-grow w-full">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100">
+      <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+          
+          <div class="flex flex-col items-center md:items-start text-center md:text-left">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white">
+                <i class="fas fa-play text-xs"></i>
+              </div>
+              <span class="text-lg font-bold text-gray-900">Wewbo</span>
+            </div>
+            <p class="text-sm text-gray-500 leading-relaxed max-w-xs">
+              Platform streaming anime modern dengan desain premium. Nikmati pengalaman menonton tanpa gangguan.
+            </p>
+          </div>
+          
+          <div class="flex justify-center gap-6">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all duration-300">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
+              <i class="fab fa-discord"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-pink-50 hover:text-pink-600 transition-all duration-300">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+
+          <div class="text-center md:text-right text-sm text-gray-400 font-medium">
+            <p>&copy; 2024 Wewbo Project.</p>
+            <p class="mt-1">Made by Azka</p>
+          </div>
+          
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
