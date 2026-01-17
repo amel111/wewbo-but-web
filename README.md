@@ -8,6 +8,7 @@ A minimal Flask-based anime scraping and streaming web application.
 - View anime details and episode lists.
 - Stream episodes directly in the browser.
 - Simple and clean interface.
+-New source : oploverz
 
 ## Prerequisites
 
