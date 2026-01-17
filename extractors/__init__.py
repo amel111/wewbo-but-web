@@ -1,8 +1,10 @@
 from .otakudesu import OtakudesuExtractor
+from .oploverz import OploversExtractor
 
 class ExtractorFactory:
     _extractors = {
-        "otakudesu": OtakudesuExtractor
+        "otakudesu": OtakudesuExtractor,
+        "oploverz": OploversExtractor
     }
 
     @staticmethod

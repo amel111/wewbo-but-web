@@ -125,18 +125,30 @@ class OtakudesuExtractor(BaseExtractor):
             iframe_src = iframe.get('src')
             
             if "pdrain" in target_source_name.lower():
-                 return {"type": "iframe", "url": iframe_src}
-                 
-            try:
-                vid_res = self.session.get(iframe_src, headers={"Referer": episode_url})
-                vid_soup = BeautifulSoup(vid_res.text, 'html.parser')
-                source = vid_soup.find('source')
-                if source:
-                    return {"type": "mp4", "url": source.get('src')}
-            except:
-                pass
-                
-            return {"type": "iframe", "url": iframe_src}
+                 stream_data = {"type": "iframe", "url": iframe_src}
+            else:
+                try:
+                    vid_res = self.session.get(iframe_src, headers={"Referer": episode_url})
+                    vid_soup = BeautifulSoup(vid_res.text, 'html.parser')
+                    source = vid_soup.find('source')
+                    if source:
+                        stream_data = {"type": "mp4", "url": source.get('src')}
+                    else:
+                        stream_data = {"type": "iframe", "url": iframe_src}
+                except:
+                    stream_data = {"type": "iframe", "url": iframe_src}
+
+            # Extract Navigation (Next/Prev)
+            flir = soup.select(".flir a")
+            for a in flir:
+                text = a.get_text(strip=True).lower()
+                link = a.get('href')
+                if "prev" in text or "sebelum" in text:
+                    stream_data["prev_ep"] = link
+                elif "next" in text or "selanjut" in text:
+                    stream_data["next_ep"] = link
+
+            return stream_data
 
         except Exception as e:
             return {"error": str(e)}

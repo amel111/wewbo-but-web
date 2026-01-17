@@ -4,7 +4,7 @@ from extractors import ExtractorFactory
 app = Flask(__name__)
 
 # Default source
-DEFAULT_SOURCE = "otakudesu"
+DEFAULT_SOURCE = "oploverz"
 
 @app.context_processor
 def inject_globals():
@@ -58,4 +58,4 @@ def watch_episode(source, url):
     return render_template('watch.html', stream=stream_data, episode_url=url, source=source)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8000)

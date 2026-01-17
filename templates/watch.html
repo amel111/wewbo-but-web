@@ -2,53 +2,102 @@
 
 {% block content %}
 
-<div class="max-w-5xl mx-auto">
-    <div class="mb-6">
-        <a href="#" onclick="history.back()" class="text-sm text-gray-400 hover:text-red-600 transition-colors">
-            <i class="fas fa-arrow-left mr-2"></i>Kembali ke Episode
-        </a>
-    </div>
+<div class="max-w-[1400px] mx-auto px-4 lg:px-8">
+    <div class="flex items-start justify-center gap-6">
+        
+        <!-- Left Ad (Hidden on mobile/tablet) -->
+        <div class="hidden xl:block sticky top-24 shrink-0">
+            <a href="https://pindita.my.id/" target="_blank" class="block w-[160px] h-[600px] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+                <div class="relative w-full h-full">
+                    <img src="{{ url_for('static', filename='images/banner_left.png') }}" alt="Pindita Tech" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
+                    <span class="absolute top-2 right-2 text-[10px] text-gray-400 bg-white/90 px-1 rounded">Ad</span>
+                </div>
+            </a>
+        </div>
 
-    <div class="bg-black rounded-xl overflow-hidden shadow-lg aspect-video relative">
-        {% if stream.error %}
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-                <i class="fas fa-exclamation-circle text-4xl text-red-600 mb-4"></i>
-                <p class="text-xl font-bold mb-2">Gagal Memuat Video</p>
-                <p class="text-gray-400">{{ stream.error }}</p>
+        <!-- Main Content (Video) -->
+        <div class="w-full max-w-4xl flex-1">
+            <div class="mb-6">
+                <a href="#" onclick="history.back()" class="text-sm text-gray-400 hover:text-red-600 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>Kembali ke Episode
+                </a>
             </div>
-        {% elif stream.type == 'mp4' %}
-            <video controls width="100%" height="100%" class="w-full h-full object-contain" autoplay>
-                <source src="{{ stream.url }}" type="video/mp4">
-                Browser Anda tidak mendukung tag video.
-            </video>
-        {% elif stream.type == 'm3u8' %}
-            <video id="video-player" controls class="w-full h-full object-contain"></video>
-            <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
-            <script>
-                var video = document.getElementById('video-player');
-                var videoSrc = '{{ stream.url }}';
-                if (Hls.isSupported()) {
-                    var hls = new Hls();
-                    hls.loadSource(videoSrc);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        video.play();
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = videoSrc;
-                    video.addEventListener('loadedmetadata', function() {
-                        video.play();
-                    });
-                }
-            </script>
-        {% elif stream.type == 'iframe' %}
-            <iframe src="{{ stream.url }}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-        {% endif %}
-    </div>
 
-    <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200">
-        <h1 class="text-xl font-bold text-gray-900">Sedang Menonton</h1>
-        <p class="text-gray-400 text-sm mt-1">{{ episode_url }}</p>
+            <div class="bg-black rounded-xl overflow-hidden shadow-lg aspect-video relative">
+                {% if stream.error %}
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
+                        <i class="fas fa-exclamation-circle text-4xl text-red-600 mb-4"></i>
+                        <p class="text-xl font-bold mb-2">Gagal Memuat Video</p>
+                        <p class="text-gray-400">{{ stream.error }}</p>
+                    </div>
+                {% elif stream.type == 'mp4' %}
+                    <video controls width="100%" height="100%" class="w-full h-full object-contain" autoplay>
+                        <source src="{{ stream.url }}" type="video/mp4">
+                        Browser Anda tidak mendukung tag video.
+                    </video>
+                {% elif stream.type == 'm3u8' %}
+                    <video id="video-player" controls class="w-full h-full object-contain"></video>
+                    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+                    <script>
+                        var video = document.getElementById('video-player');
+                        var videoSrc = '{{ stream.url }}';
+                        if (Hls.isSupported()) {
+                            var hls = new Hls();
+                            hls.loadSource(videoSrc);
+                            hls.attachMedia(video);
+                            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                                video.play();
+                            });
+                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                            video.src = videoSrc;
+                            video.addEventListener('loadedmetadata', function() {
+                                video.play();
+                            });
+                        }
+                    </script>
+                {% elif stream.type == 'iframe' %}
+                    <iframe src="{{ stream.url }}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                {% endif %}
+            </div>
+
+            <div class="mt-6 flex flex-col md:flex-row gap-6">
+                <!-- Main Info -->
+                <div class="flex-1 bg-white p-6 rounded-xl border border-gray-200">
+                    <h1 class="text-xl font-bold text-gray-900">Sedang Menonton</h1>
+                    <p class="text-gray-400 text-sm mt-1 mb-4">{{ episode_url }}</p>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="flex items-center gap-3">
+                        {% if stream.prev_ep %}
+                        <a href="{{ url_for('watch_episode', source=source, url=stream.prev_ep) }}" class="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-chevron-left text-xs"></i>
+                            <span>Episode Sebelumnya</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if stream.next_ep %}
+                        <a href="{{ url_for('watch_episode', source=source, url=stream.next_ep) }}" class="flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-red-200">
+                            <span>Episode Selanjutnya</span>
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Ad (Hidden on mobile/tablet) -->
+        <div class="hidden xl:block sticky top-24 shrink-0">
+            <a href="https://pindita.my.id/post/alur-pembuatan-ktp" target="_blank" class="block w-[160px] h-[600px] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+                <div class="relative w-full h-full">
+                    <img src="{{ url_for('static', filename='images/banner_right.png') }}" alt="Cara Buat KTP" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
+                    <span class="absolute top-2 left-2 text-[10px] text-gray-400 bg-white/90 px-1 rounded">Ad</span>
+                </div>
+            </a>
+        </div>
+
     </div>
 </div>
 
